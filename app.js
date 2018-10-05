@@ -1,5 +1,5 @@
 const cells = document.querySelectorAll('.cell');
-const winner = document.querySelector('#winner h2'); 
+const displayMsg = document.querySelector('#display h2'); 
 
 let lastMove = '';
 let gameOver = false;
@@ -14,12 +14,7 @@ const winningCombinations = [
     [2, 5, 8]
 ];
 
-cells.forEach(cell => {
-    cell.addEventListener('click', makeMove);
-});
-
-function makeMove (e) {
-    const cell = e.target;
+const makeMove = ({target: cell }) => {
     if (gameOver) {
         reset();
     } else if (!cell.classList.contains('selected')) {
@@ -35,11 +30,11 @@ function makeMove (e) {
     }
 }
 
-function checkForWin () {
+const checkForWin = () => {
     winningCombinations.forEach(combination => {
         const [x, y, z] = combination;
         if (cells[x].classList.contains('selected') && cells[y].classList.contains('selected') && cells[z].classList.contains('selected')) {
-            if (cells[x].innerText === cells[y].innerText && cells[x].innerText === cells[z].innerText) {
+            if (cells[x].innerText === cells[y].innerText && cells[y].innerText === cells[z].innerText) {
                 cells[x].classList.add('win');
                 cells[y].classList.add('win');
                 cells[z].classList.add('win');
@@ -48,27 +43,25 @@ function checkForWin () {
             }
         }
     });
-
+    
     const draw = Array.from(cells).every(cell => cell.classList.contains('selected'));
     if (draw && !gameOver) {
         displayDraw();
     }
 }
 
-function displayWinner () {
-    winner.innerText = lastMove + ' is the Winner';
-}
+const displayWinner = () => displayMsg.innerText = lastMove + ' is the Winner';
 
-function displayDraw () {
-    winner.innerText = 'Draw';
-}
+const displayDraw = () => displayMsg.innerText = 'Draw';
 
-function reset () {
+const reset = () => {
     cells.forEach(cell => {
         cell.innerText = '';
         cell.classList.remove('selected', 'win');
     });
     lastMove = '';
-    winner.innerText = '';
+    displayMsg.innerText = '';
     gameOver = false;
 }
+
+cells.forEach(cell => cell.addEventListener('click', makeMove));
